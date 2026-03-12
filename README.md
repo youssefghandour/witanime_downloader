@@ -10,7 +10,7 @@
 
 Your browser opens automatically with a clean interface. No installation, no terminal, no setup.
 
-→ **[Download latest release](https://github.com/yourusername/witanime-dl/releases/latest)**
+→ **[Download latest release](https://github.com/youssefghandour/witanime_downloader/releases/latest)**
 
 ---
 
