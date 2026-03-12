@@ -1,0 +1,32 @@
+# witanime-dl configuration
+# Edit this file to match your setup — no need to touch the code
+
+# ── Download folder ────────────────────────────────────────────────────────────
+# Where your episodes are saved. The script scans this to skip already-downloaded eps.
+download_dir: "./downloads"
+
+# ── Browser ───────────────────────────────────────────────────────────────────
+# "brave" is strongly recommended — its built-in ad blocker prevents the ad
+# redirects that interfere with page loading. Falls back to Chrome automatically.
+browser: brave
+brave_path: "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+
+# ── Provider preference ───────────────────────────────────────────────────────
+# Which download host to prefer. MediaFire gives permanent direct URLs — best choice.
+# Options: mediafire | mp4upload | googledrive | mega
+preferred_provider: mediafire
+
+# ── Timing (seconds) ──────────────────────────────────────────────────────────
+# Increase js_wait if you're getting "button not found" errors (slow connection)
+js_wait: 6
+request_delay: 2
+page_timeout: 25
+
+# ── Output ────────────────────────────────────────────────────────────────────
+output_file: "episodes.txt"       # FDM / IDM import file
+aria2_file: "episodes.aria2"      # aria2c input file
+progress_file: "progress.json"    # resume state (auto-managed, don't edit)
+
+# ── Episode range ─────────────────────────────────────────────────────────────
+start_episode: 1
+max_episode: 9999
