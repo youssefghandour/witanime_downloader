@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>witanime-dl</title>
+<style>
+  :root {
+    --bg:       #0f1117;
+    --surface:  #1a1d27;
+    --border:   #2a2d3a;
+    --accent:   #6c63ff;
+    --accent2:  #ff6584;
+    --green:    #43d98c;
+    --yellow:   #f5c542;
+    --red:      #ff5f5f;
+    --text:     #e2e8f0;
+    --muted:    #8892a4;
+    --radius:   12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 64px;
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  header p {
+    color: var(--muted);
+    margin-top: 6px;
+    font-size: 0.95rem;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    width: 100%;
+    max-width: 680px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: var(--bg);
+    padding: 6px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .tab {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    border-radius: 7px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .tab.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ── Form fields ── */
+  label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .field { margin-bottom: 16px; }
+
+  .row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+  .row .field { flex: 1; margin-bottom: 0; }
+
+  input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 0.92rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-family: monospace;
+    font-size: 0.82rem;
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #5a52e0; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-danger {
+    background: transparent;
+    border: 1px solid var(--red);
+    color: var(--red);
+  }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-danger:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-success {
+    background: var(--green);
+    color: #000;
+    font-weight: 700;
+  }
+  .btn-success:hover { background: #38c47d; }
+
+  .btn-sm { padding: 7px 14px; font-size: 0.82rem; }
+
+  /* ── Browse button inline ── */
+  .folder-row {
+    display: flex;
+    gap: 8px;
+  }
+  .folder-row input { flex: 1; }
+
+  /* ── Progress bar ── */
+  .progress-wrap {
+    margin: 16px 0 8px;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg);
+    border-radius: 99px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* ── Stats row ── */
+  .stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    flex: 1;
+    min-width: 120px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+  }
+  .stat-val {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ── Log ── */
+  #log {
+    background: #0a0c12;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    height: 320px;
+    overflow-y: auto;
+    font-family: 'Consolas', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    line-height: 1.7;
+  }
+  #log .line { display: block; }
+  #log .line.info    { color: #c9d1e0; }
+  #log .line.success { color: var(--green); }
+  #log .line.warn    { color: var(--yellow); }
+  #log .line.error   { color: var(--red); }
+  #log .line.progress { display: none; }  /* internal signal, not shown */
+
+  /* ── Controls row ── */
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Download buttons ── */
+  .download-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Status badge ── */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .badge-idle    { background: #2a2d3a; color: var(--muted); }
+  .badge-running { background: #1e3a5f; color: #60a5fa; }
+  .badge-paused  { background: #3a2e1e; color: var(--yellow); }
+  .badge-done    { background: #1e3a2a; color: var(--green); }
+  .badge-error   { background: #3a1e1e; color: var(--red); }
+
+  /* ── Section hidden ── */
+  .hidden { display: none; }
+
+  /* ── Responsive ── */
+  @media (max-width: 500px) {
+    .stats { gap: 10px; }
+    .stat-val { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>witanime-dl</h1>
+  <p>Collect permanent download links for anime episodes — no command line needed</p>
+</header>
+
+<!-- ── Settings card ── -->
+<div class="card" id="settings-card">
+  <h2>⚙️ Settings</h2>
+
+  <!-- Mode tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="setMode('normal')">📥 Collect Missing Episodes</button>
+    <button class="tab" onclick="setMode('refresh')">🔄 Refresh Expired Links</button>
+  </div>
+
+  <!-- Normal mode fields -->
+  <div id="normal-fields">
+    <div class="field">
+      <label>Download Folder (where your episodes are saved)</label>
+      <div class="folder-row">
+        <input type="text" id="folder" value="{{ default_folder }}" placeholder="{{ default_folder }}" />
+        <button class="btn btn-ghost btn-sm" onclick="browseFolder()">📂 Browse</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>From Episode</label>
+        <input type="number" id="start_ep" value="61" min="1" max="9999" />
+      </div>
+      <div class="field">
+        <label>To Episode</label>
+        <input type="number" id="end_ep" value="500" min="1" max="9999" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Refresh mode fields -->
+  <div id="refresh-fields" class="hidden">
+    <div class="field">
+      <label>Paste your expired URLs here (one per line)</label>
+      <textarea id="refresh_urls" placeholder="https://download1078.mediafire.com/...&#10;https://download1078.mediafire.com/..."></textarea>
+    </div>
+  </div>
+
+  <!-- Start button -->
+  <div style="margin-top:8px">
+    <button class="btn btn-primary" id="btn-start" onclick="startJob()" style="width:100%;padding:13px;font-size:1rem;">
+      🚀 Start
+    </button>
+  </div>
+</div>
+
+<!-- ── Progress card ── -->
+<div class="card" id="progress-card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <h2 style="margin-bottom:0">📊 Progress</h2>
+    <span class="badge badge-idle" id="status-badge">Idle</span>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val" id="stat-collected">0</div>
+      <div class="stat-label">Links collected</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-failed">0</div>
+      <div class="stat-label">Failed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-size">—</div>
+      <div class="stat-label">Total size</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-remaining">—</div>
+      <div class="stat-label">Remaining</div>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span id="progress-text">0 / 0 episodes</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn btn-ghost" id="btn-pause" onclick="pauseJob()" disabled>⏸ Pause</button>
+    <button class="btn btn-danger" id="btn-stop"  onclick="stopJob()"  disabled>⛔ Stop</button>
+  </div>
+
+  <!-- Log -->
+  <div id="log"></div>
+
+  <!-- Download buttons (shown when done) -->
+  <div class="download-row hidden" id="download-row">
+    <a href="/api/download-txt"   class="btn btn-success">⬇ Download episodes.txt (FDM/IDM)</a>
+    <a href="/api/download-aria2" class="btn btn-ghost">⬇ Download episodes.aria2 (aria2c)</a>
+  </div>
+</div>
+
+<!-- ── How to use ── -->
+<div class="card">
+  <h2>📖 How to use</h2>
+  <div style="color:var(--muted); font-size:0.88rem; line-height:1.9;">
+    <b style="color:var(--text)">1.</b> Select your download folder (where your Naruto episodes are saved).<br>
+    <b style="color:var(--text)">2.</b> Set the episode range (default 61–500 covers all of Shippuden).<br>
+    <b style="color:var(--text)">3.</b> Click <b style="color:var(--accent)">Start</b> — the app scans your folder and only collects links for episodes you're missing.<br>
+    <b style="color:var(--text)">4.</b> When done, click <b style="color:var(--green)">Download episodes.txt</b>.<br>
+    <b style="color:var(--text)">5.</b> In FDM: <code style="color:var(--accent)">File → Import → From Text File → episodes.txt</code><br>
+    <br>
+    <b style="color:var(--text)">Refresh mode:</b> If your old links expired, paste them in Refresh mode to get new permanent links.
+  </div>
+</div>
+
+<script>
+  // ── State ──────────────────────────────────────────────────────────────────
+  let mode       = 'normal';
+  let evtSource  = null;
+  let isRunning  = false;
+  let isPaused   = false;
+  let doneEps    = 0;
+  let totalEps   = 0;
+  let totalBytes = 0;
+
+  // ── Mode switch ────────────────────────────────────────────────────────────
+  function setMode(m) {
+    mode = m;
+    document.querySelectorAll('.tab').forEach((t, i) => {
+      t.classList.toggle('active', (m === 'normal') ? i === 0 : i === 1);
+    });
+    document.getElementById('normal-fields').classList.toggle('hidden', m !== 'normal');
+    document.getElementById('refresh-fields').classList.toggle('hidden', m !== 'refresh');
+  }
+
+  // ── Folder picker ──────────────────────────────────────────────────────────
+  async function browseFolder() {
+    const res = await fetch('/api/browse-folder');
+    const data = await res.json();
+    if (data.path) document.getElementById('folder').value = data.path;
+  }
+
+  // ── Start ──────────────────────────────────────────────────────────────────
+  async function startJob() {
+    if (isRunning) return;
+
+    clearLog();
+    resetStats();
+
+    const payload = {
+      mode:         mode,
+      folder:       document.getElementById('folder').value,
+      start_ep:     document.getElementById('start_ep').value,
+      end_ep:       document.getElementById('end_ep').value,
+      refresh_urls: mode === 'refresh' ? document.getElementById('refresh_urls').value : '',
+    };
+
+    const res = await fetch('/api/start', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      appendLog('❌ ' + (err.error || 'Failed to start'), 'error');
+      return;
+    }
+
+    setRunning(true);
+    startSSE();
+  }
+
+  // ── Pause ──────────────────────────────────────────────────────────────────
+  async function pauseJob() {
+    await fetch('/api/pause', {method: 'POST'});
+    isPaused = !isPaused;
+    const btn = document.getElementById('btn-pause');
+    btn.textContent = isPaused ? '▶ Resume' : '⏸ Pause';
+    setBadge(isPaused ? 'paused' : 'running');
+  }
+
+  // ── Stop ───────────────────────────────────────────────────────────────────
+  async function stopJob() {
+    await fetch('/api/stop', {method: 'POST'});
+    document.getElementById('btn-stop').disabled = true;
+  }
+
+  // ── SSE log stream ─────────────────────────────────────────────────────────
+  function startSSE() {
+    if (evtSource) evtSource.close();
+    evtSource = new EventSource('/api/stream');
+
+    evtSource.onmessage = (e) => {
+      const item = JSON.parse(e.data);
+
+      if (item.level === 'done') {
+        setRunning(false);
+        setBadge('done');
+        document.getElementById('download-row').classList.remove('hidden');
+        evtSource.close();
+        return;
+      }
+
+      if (item.level === 'progress') {
+        // Internal progress signal: __PROGRESS__done/total/bytes
+        const parts = item.msg.replace('__PROGRESS__', '').split('/');
+        doneEps    = parseInt(parts[0]);
+        totalEps   = parseInt(parts[1]);
+        totalBytes = parseInt(parts[2]);
+        updateStats();
+        return;
+      }
+
+      appendLog(item.msg, item.level);
+    };
+  }
+
+  // ── Log helpers ───────────────────────────────────────────────────────────
+  function appendLog(msg, level='info') {
+    const log = document.getElementById('log');
+    const line = document.createElement('span');
+    line.className = 'line ' + level;
+    line.textContent = msg;
+    log.appendChild(line);
+    log.appendChild(document.createElement('br'));
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function clearLog() {
+    document.getElementById('log').innerHTML = '';
+  }
+
+  // ── Stats ──────────────────────────────────────────────────────────────────
+  function resetStats() {
+    doneEps = totalEps = totalBytes = 0;
+    updateStats();
+    document.getElementById('stat-collected').textContent = '0';
+    document.getElementById('stat-failed').textContent = '0';
+    document.getElementById('stat-remaining').textContent = '—';
+    document.getElementById('download-row').classList.add('hidden');
+  }
+
+  function updateStats() {
+    const pct = totalEps > 0 ? Math.round((doneEps / totalEps) * 100) : 0;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = `${doneEps} / ${totalEps} episodes`;
+    document.getElementById('progress-pct').textContent  = pct + '%';
+    document.getElementById('stat-size').textContent     = formatBytes(totalBytes);
+    document.getElementById('stat-remaining').textContent = (totalEps - doneEps) || '—';
+
+    // Poll actual collected/failed counts
+    fetch('/api/status').then(r => r.json()).then(d => {
+      document.getElementById('stat-collected').textContent = d.entries;
+      document.getElementById('stat-failed').textContent    = d.failed.length;
+    });
+  }
+
+  function formatBytes(b) {
+    if (!b) return '—';
+    if (b >= 1e9) return (b/1e9).toFixed(2) + ' GB';
+    if (b >= 1e6) return (b/1e6).toFixed(1) + ' MB';
+    return (b/1e3).toFixed(1) + ' KB';
+  }
+
+  // ── UI state helpers ───────────────────────────────────────────────────────
+  function setRunning(running) {
+    isRunning = running;
+    isPaused  = false;
+    document.getElementById('btn-start').disabled  = running;
+    document.getElementById('btn-pause').disabled  = !running;
+    document.getElementById('btn-stop').disabled   = !running;
+    document.getElementById('btn-pause').textContent = '⏸ Pause';
+    setBadge(running ? 'running' : 'idle');
+  }
+
+  function setBadge(state) {
+    const badge = document.getElementById('status-badge');
+    badge.className = 'badge badge-' + state;
+    const labels = {idle:'Idle', running:'Running…', paused:'Paused', done:'Done ✓', error:'Error'};
+    badge.textContent = labels[state] || state;
+  }
+</script>
+</body>
+</html>

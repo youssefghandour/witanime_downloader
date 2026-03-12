@@ -6,8 +6,9 @@ Falls back to safe defaults if the file is missing or a key is absent.
 import os
 import yaml
 
+import os as _os
 DEFAULTS = {
-    "download_dir":       "./downloads",
+    "download_dir":       _os.path.join(_os.path.expanduser("~"), "Downloads"),
     "browser":            "brave",
     "brave_path":         r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe",
     "preferred_provider": "mediafire",
